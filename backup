@@ -1,0 +1,75 @@
+#!/usr/bin/sh
+#
+# Examlple of using options in scripts
+#
+
+FILE=""
+
+Help()
+{
+    echo "Usage:"
+    echo "backup -h "
+    echo "backup -b FILE"
+#    echo ""
+    echo "   -b     backups file"
+    echo "   -h     help (this output)"
+}
+
+FileError()
+{
+    echo "Error: $FILE File not found"
+    exit
+}
+
+Backup()
+{
+    [ ! -f "$FILE" ] && FileError
+
+    TIME="$(date +%y-%m-%d-%Hh%Mm)"
+    NEWFILE="$FILE.$TIME.bkp"
+    cp -f "$FILE" $NEWFILE
+
+    echo "Backup created: $NEWFILE"
+}
+
+Restore()
+{
+    [ ! -f "$FILE" ] && FileError
+
+    NEWFILE=$(echo "$FILE" | sed -e 's/\.[^\.]\+\.[^\.]\+$//')
+    cp -f "$FILE" "$NEWFILE"
+    
+    echo "Backup restored: $NEWFILE"
+}
+
+
+if [ $# -eq 0 ]
+then
+        echo "Missing options!"
+        Help
+        exit
+fi
+
+while getopts ":b:r:h" OPTION; do
+#        echo "opt $OPTION"
+#        echo "optarg $OPTARG"
+        case $OPTION in
+                h)
+                    Help
+                    exit;;
+                b)
+                    FILE=$OPTARG
+                    Backup
+                    exit;;
+                r) # restore backup
+                    FILE=$OPTARG
+                    Restore
+                    exit;;
+
+                \?) # Invalid option
+                    echo "Error: Invalid option"
+                    exit;;
+        esac
+done
+
+
