@@ -1,7 +1,4 @@
-#!/usr/bin/sh
-#
-# Examlple of using options in scripts
-#
+#!/bin/sh
 
 FILE=""
 
@@ -51,8 +48,6 @@ then
 fi
 
 while getopts ":b:r:h" OPTION; do
-#        echo "opt $OPTION"
-#        echo "optarg $OPTARG"
         case $OPTION in
                 h)
                     Help
